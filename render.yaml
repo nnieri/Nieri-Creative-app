@@ -21,8 +21,5 @@ services:
         value: openai
       - key: OPENAI_MODEL
         value: gpt-5.4-mini
-      - key: ARYEO_API_TOKEN
-        sync: false
       - key: OPENAI_API_KEY
         sync: false
-

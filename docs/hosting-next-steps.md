@@ -26,12 +26,13 @@ Important: `backend/.env`, `mobile/.env`, and other secret files are ignored by 
 1. Go to Render.
 2. Create a Blueprint from the GitHub repo.
 3. Render reads `render.yaml`.
-4. Enter prompted secret values:
-   - `ARYEO_API_TOKEN`
+4. Enter the prompted secret value:
    - `OPENAI_API_KEY`
 5. Wait for deploy to finish.
 6. Copy the Render backend URL, which will look like `https://...onrender.com`.
 7. Visit `/health` on that URL to confirm the backend is live.
+
+The draft uses mock Aryeo data for listings/orders, so an Aryeo token is not required for this first hosted version.
 
 ## 3. Deploy Web App On Netlify
 
@@ -66,4 +67,3 @@ Then redeploy/restart the backend.
 - Replace mock Aryeo API data with live Aryeo endpoints after endpoint behavior is confirmed.
 - Add privacy policy and support page before sharing broadly.
 - Return to Apple Developer/TestFlight once the account issue is resolved.
-

@@ -25,13 +25,12 @@ PORT=4000
 CORS_ORIGIN=https://your-web-app-domain.com
 USE_MOCK_ARYEO=true
 ARYEO_API_BASE_URL=https://api.aryeo.com/v1
-ARYEO_API_TOKEN=your_aryeo_token
 AI_PROVIDER=openai
 OPENAI_API_KEY=your_openai_key
 OPENAI_MODEL=gpt-5.4-mini
 ```
 
-Keep `USE_MOCK_ARYEO=true` until live Aryeo API endpoints are confirmed.
+Keep `USE_MOCK_ARYEO=true` until live Aryeo API endpoints are confirmed. `ARYEO_API_TOKEN` is only needed later when `USE_MOCK_ARYEO=false`.
 
 This repo also includes `render.yaml`. Render requires that file to be named `render.yaml` and located at the root of the Git repository. Secret values are marked with `sync: false`, so Render prompts for them instead of storing secrets in source control.
 
@@ -101,8 +100,7 @@ These are generated or copied during `npm run build:web`.
 
 1. Push this project to a private GitHub repository.
 2. In Render, create a Blueprint from the GitHub repo. Render will read `render.yaml`.
-3. Enter the prompted secret values:
-   - `ARYEO_API_TOKEN`
+3. Enter the prompted secret value:
    - `OPENAI_API_KEY`
 4. Wait for the backend to deploy and copy its `https://...onrender.com` URL.
 5. In Netlify, create a new site from the same GitHub repo.
