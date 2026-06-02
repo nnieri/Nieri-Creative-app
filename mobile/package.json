@@ -1,0 +1,29 @@
+{
+  "name": "nieri-creative-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo start --ios",
+    "android": "expo start --android",
+    "web": "expo start --web",
+    "export:web": "expo export --platform web --output-dir dist-web",
+    "build:web": "npm run export:web && node scripts/create-pwa-icons.mjs && node scripts/prepare-web-dist.mjs"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~56.0.13",
+    "expo": "^56.0.8",
+    "expo-clipboard": "~56.0.3",
+    "expo-web-browser": "~56.0.5",
+    "lucide-react-native": "^1.17.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "^0.21.2"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}

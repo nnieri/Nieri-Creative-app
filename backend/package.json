@@ -1,0 +1,19 @@
+{
+  "name": "nieri-creative-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+
