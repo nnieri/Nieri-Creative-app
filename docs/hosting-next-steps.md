@@ -43,6 +43,7 @@ The draft uses mock Aryeo data for listings/orders, so an Aryeo token is not req
 
 ```bash
 EXPO_PUBLIC_API_BASE_URL=https://your-render-backend-url.onrender.com
+EXPO_PUBLIC_SUPPORT_EMAIL=support@example.com
 ```
 
 5. Deploy.
@@ -50,7 +51,9 @@ EXPO_PUBLIC_API_BASE_URL=https://your-render-backend-url.onrender.com
    - Booking opens Aryeo in a separate tab/window.
    - Media shows listings/orders.
    - AI tools generate copy.
+   - AI tool copy buttons copy generated drafts.
    - Prep checklist works.
+   - More screen shows support and privacy notes.
 
 ## 4. Tighten Backend CORS
 

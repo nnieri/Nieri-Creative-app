@@ -20,6 +20,7 @@ export default {
     extra: {
       apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
       aryeoOrderFormUrl: process.env.EXPO_PUBLIC_ARYEO_ORDER_FORM_URL,
+      supportEmail: process.env.EXPO_PUBLIC_SUPPORT_EMAIL,
     },
   },
 };

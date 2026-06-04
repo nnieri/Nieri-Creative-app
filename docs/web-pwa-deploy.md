@@ -48,6 +48,7 @@ Set:
 ```bash
 EXPO_PUBLIC_API_BASE_URL=https://your-backend-host.example.com
 EXPO_PUBLIC_ARYEO_ORDER_FORM_URL=https://niericreative-re-photo-booking.aryeo.com/order
+EXPO_PUBLIC_SUPPORT_EMAIL=support@example.com
 ```
 
 Build:
@@ -105,5 +106,6 @@ These are generated or copied during `npm run build:web`.
 4. Wait for the backend to deploy and copy its `https://...onrender.com` URL.
 5. In Netlify, create a new site from the same GitHub repo.
 6. Set `EXPO_PUBLIC_API_BASE_URL` to the Render backend URL.
-7. Deploy the Netlify site.
-8. After Netlify provides a live URL, update Render's `CORS_ORIGIN` from `*` to the Netlify URL for a tighter production setting.
+7. Set `EXPO_PUBLIC_SUPPORT_EMAIL` to the support inbox that should receive app questions.
+8. Deploy the Netlify site.
+9. After Netlify provides a live URL, update Render's `CORS_ORIGIN` from `*` to the Netlify URL for a tighter production setting.

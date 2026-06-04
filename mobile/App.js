@@ -26,16 +26,20 @@ import {
   ClipboardCheck,
   Copy,
   ExternalLink,
+  FileText,
+  HelpCircle,
   Home,
   Images,
+  Info,
   Link2,
   Loader2,
+  Mail,
   MapPin,
-  PlayCircle,
+  ShieldCheck,
   Sparkles,
   WandSparkles,
 } from "lucide-react-native";
-import { ARYEO_ORDER_FORM_URL } from "./src/config";
+import { ARYEO_ORDER_FORM_URL, SUPPORT_EMAIL } from "./src/config";
 import { api } from "./src/services/api";
 import { colors, shadows, typography } from "./src/styles/theme";
 
@@ -46,6 +50,7 @@ const tabs = [
   { key: "book", label: "Book", icon: CalendarPlus },
   { key: "media", label: "Media", icon: Images },
   { key: "ai", label: "AI Tools", icon: Sparkles },
+  { key: "more", label: "More", icon: HelpCircle },
 ];
 
 const checklistItems = [
@@ -61,30 +66,30 @@ const checklistItems = [
   "Hide personal documents/photos if needed",
 ];
 
-const howToVideos = [
+const clientGuides = [
   {
-    title: "Prepare for listing photos",
-    category: "Shoot prep",
-    thumbnail: "https://picsum.photos/seed/nieri-video-prep/800/450",
-    url: "https://example.com/videos/listing-photo-prep",
+    title: "Photo prep essentials",
+    category: "Before the shoot",
+    summary: "Lights on, blinds open, surfaces cleared, and vehicles moved before the appointment window.",
+    icon: ClipboardCheck,
   },
   {
-    title: "Record a better real estate Reel",
-    category: "Social video",
-    thumbnail: "https://picsum.photos/seed/nieri-video-reel/800/450",
-    url: "https://example.com/videos/better-real-estate-reel",
+    title: "Delivery day workflow",
+    category: "After media is ready",
+    summary: "Open the media link, review deliverables, copy the share URL, and send assets where they need to go.",
+    icon: Images,
   },
   {
-    title: "Use listing media after delivery",
+    title: "AI copy review",
     category: "Marketing",
-    thumbnail: "https://picsum.photos/seed/nieri-video-media/800/450",
-    url: "https://example.com/videos/use-listing-media",
+    summary: "Use generated copy as a draft, then confirm property facts, compliance, pricing, and tone before publishing.",
+    icon: Sparkles,
   },
   {
     title: "What to expect on shoot day",
     category: "Client guide",
-    thumbnail: "https://picsum.photos/seed/nieri-video-shoot-day/800/450",
-    url: "https://example.com/videos/shoot-day",
+    summary: "Nieri Creative handles the media capture while Aryeo continues to manage ordering, scheduling, and payment.",
+    icon: Calendar,
   },
 ];
 
@@ -138,9 +143,9 @@ function IconButton({ icon: Icon, label, onPress, variant = "primary", disabled 
   );
 }
 
-function TextField({ label, value, onChangeText, placeholder, multiline = false, keyboardType }) {
+function TextField({ label, value, onChangeText, placeholder, multiline = false, keyboardType, style }) {
   return (
-    <View style={styles.field}>
+    <View style={[styles.field, style]}>
       <Text style={styles.fieldLabel}>{label}</Text>
       <TextInput
         value={value}
@@ -171,6 +176,36 @@ function OptionRow({ options, value, onChange }) {
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+function GuideCard({ guide }) {
+  const Icon = guide.icon;
+  return (
+    <View style={styles.guideCard}>
+      <View style={styles.guideIcon}>
+        <Icon size={22} color={colors.charcoal} strokeWidth={2.2} />
+      </View>
+      <View style={styles.guideContent}>
+        <Text style={styles.guideCategory}>{guide.category}</Text>
+        <Text style={styles.guideTitle}>{guide.title}</Text>
+        <Text style={styles.guideSummary}>{guide.summary}</Text>
+      </View>
+    </View>
+  );
+}
+
+function InfoCard({ icon: Icon, title, text }) {
+  return (
+    <View style={styles.infoCard}>
+      <View style={styles.infoIcon}>
+        <Icon size={21} color={colors.charcoal} strokeWidth={2.2} />
+      </View>
+      <View style={styles.infoContent}>
+        <Text style={styles.infoTitle}>{title}</Text>
+        <Text style={styles.infoText}>{text}</Text>
+      </View>
     </View>
   );
 }
@@ -299,18 +334,10 @@ function BookScreen({ checkedItems, setCheckedItems, openUrl, goHome }) {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How-To Videos</Text>
-        <View style={styles.videoGrid}>
-          {howToVideos.map((video) => (
-            <Pressable key={video.title} style={styles.videoCard} onPress={() => openUrl(video.url)}>
-              <ImageBackground source={{ uri: video.thumbnail }} style={styles.videoImage} imageStyle={styles.videoImageRadius}>
-                <View style={styles.playBadge}>
-                  <PlayCircle size={22} color={colors.panel} />
-                </View>
-              </ImageBackground>
-              <Text style={styles.videoCategory}>{video.category}</Text>
-              <Text style={styles.videoTitle}>{video.title}</Text>
-            </Pressable>
+        <Text style={styles.sectionTitle}>Client Guides</Text>
+        <View style={styles.guideGrid}>
+          {clientGuides.map((guide) => (
+            <GuideCard key={guide.title} guide={guide} />
           ))}
         </View>
       </View>
@@ -324,7 +351,7 @@ function MediaScreen({ orders, appointments, loading, error, refresh, copyLink, 
       <View style={styles.sectionHeader}>
         <View>
           <Text style={styles.screenTitle}>Listings & Orders</Text>
-          <Text style={styles.screenCopy}>Mock Aryeo media, appointments, and order status.</Text>
+          <Text style={styles.screenCopy}>Order status, appointments, and delivered media in one place.</Text>
         </View>
         <Pressable onPress={refresh} style={styles.refreshButton}>
           {loading ? <Loader2 size={18} color={colors.muted} /> : <Text style={styles.refreshText}>Refresh</Text>}
@@ -377,12 +404,14 @@ function MediaScreen({ orders, appointments, loading, error, refresh, copyLink, 
   );
 }
 
-function AiToolsScreen({ aiTool, setAiTool }) {
+function AiToolsScreen({ aiTool, setAiTool, copyText }) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
       <ScrollView contentContainerStyle={styles.screenContent}>
         <Text style={styles.screenTitle}>AI Tools</Text>
-        <Text style={styles.screenCopy}>Generate quick marketing copy from backend-only AI endpoints.</Text>
+        <Text style={styles.screenCopy}>
+          Draft listing descriptions and social scripts, then review the details before publishing.
+        </Text>
         <OptionRow
           options={[
             { value: "listing", label: "Listing Description" },
@@ -391,13 +420,17 @@ function AiToolsScreen({ aiTool, setAiTool }) {
           value={aiTool}
           onChange={setAiTool}
         />
-        {aiTool === "listing" ? <ListingDescriptionTool /> : <SocialScriptTool />}
+        {aiTool === "listing" ? (
+          <ListingDescriptionTool copyText={copyText} />
+        ) : (
+          <SocialScriptTool copyText={copyText} />
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-function ListingDescriptionTool() {
+function ListingDescriptionTool({ copyText }) {
   const [form, setForm] = useState({
     address: "",
     bedrooms: "",
@@ -426,8 +459,8 @@ function ListingDescriptionTool() {
     <View style={styles.toolStack}>
       <TextField label="Property address" value={form.address} onChangeText={(value) => update("address", value)} placeholder="214 Harbor View Lane" />
       <View style={styles.twoColumn}>
-        <TextField label="Bedrooms" value={form.bedrooms} onChangeText={(value) => update("bedrooms", value)} placeholder="4" keyboardType="numeric" />
-        <TextField label="Bathrooms" value={form.bathrooms} onChangeText={(value) => update("bathrooms", value)} placeholder="3.5" keyboardType="decimal-pad" />
+        <TextField label="Bedrooms" value={form.bedrooms} onChangeText={(value) => update("bedrooms", value)} placeholder="4" keyboardType="numeric" style={styles.columnField} />
+        <TextField label="Bathrooms" value={form.bathrooms} onChangeText={(value) => update("bathrooms", value)} placeholder="3.5" keyboardType="decimal-pad" style={styles.columnField} />
       </View>
       <TextField label="Square footage" value={form.squareFeet} onChangeText={(value) => update("squareFeet", value)} placeholder="3120" keyboardType="numeric" />
       <TextField label="Key features" value={form.keyFeatures} onChangeText={(value) => update("keyFeatures", value)} placeholder="Water views, chef kitchen, screened porch" multiline />
@@ -437,16 +470,16 @@ function ListingDescriptionTool() {
 
       {result ? (
         <View style={styles.results}>
-          <ResultBlock title="MLS Description" text={result.mlsDescription} />
-          <ResultBlock title="Short Portal Description" text={result.shortDescription} />
-          <ResultBlock title="Social Caption" text={result.socialCaption} />
+          <ResultBlock title="MLS Description" text={result.mlsDescription} copyText={copyText} />
+          <ResultBlock title="Short Portal Description" text={result.shortDescription} copyText={copyText} />
+          <ResultBlock title="Social Caption" text={result.socialCaption} copyText={copyText} />
         </View>
       ) : null}
     </View>
   );
 }
 
-function SocialScriptTool() {
+function SocialScriptTool({ copyText }) {
   const [form, setForm] = useState({
     propertyType: "",
     location: "",
@@ -482,23 +515,109 @@ function SocialScriptTool() {
 
       {result ? (
         <View style={styles.results}>
-          <ResultBlock title="Hook" text={result.hook} />
-          <ResultBlock title="15-Second Script" text={result.fifteenSecondScript} />
-          <ResultBlock title="30-Second Script" text={result.thirtySecondScript} />
-          <ResultBlock title="CTA" text={result.cta} />
-          <ResultBlock title="Caption" text={result.caption} />
+          <ResultBlock title="Hook" text={result.hook} copyText={copyText} />
+          <ResultBlock title="15-Second Script" text={result.fifteenSecondScript} copyText={copyText} />
+          <ResultBlock title="30-Second Script" text={result.thirtySecondScript} copyText={copyText} />
+          <ResultBlock title="CTA" text={result.cta} copyText={copyText} />
+          <ResultBlock title="Caption" text={result.caption} copyText={copyText} />
         </View>
       ) : null}
     </View>
   );
 }
 
-function ResultBlock({ title, text }) {
+function ResultBlock({ title, text, copyText }) {
   return (
     <View style={styles.resultBlock}>
-      <Text style={styles.resultTitle}>{title}</Text>
+      <View style={styles.resultHeader}>
+        <Text style={styles.resultTitle}>{title}</Text>
+        <Pressable onPress={() => copyText(text, `${title} copied`)} style={styles.resultCopyButton}>
+          <Copy size={15} color={colors.charcoal} />
+          <Text style={styles.resultCopyText}>Copy</Text>
+        </Pressable>
+      </View>
       <Text style={styles.resultText}>{text}</Text>
     </View>
+  );
+}
+
+function MoreScreen({ openUrl }) {
+  const supportUrl = SUPPORT_EMAIL
+    ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Nieri Creative app support")}`
+    : "";
+
+  return (
+    <ScrollView contentContainerStyle={styles.screenContent}>
+      <View style={styles.section}>
+        <Text style={styles.screenTitle}>More</Text>
+        <Text style={styles.screenCopy}>
+          Support, privacy notes, and launch readiness for the Nieri Creative client app.
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Support</Text>
+        <InfoCard
+          icon={Mail}
+          title={SUPPORT_EMAIL ? SUPPORT_EMAIL : "Support inbox pending"}
+          text={
+            SUPPORT_EMAIL
+              ? "Use this for app access, media delivery, booking, or AI tool questions."
+              : "A support email will appear here before the app is shared broadly."
+          }
+        />
+        <IconButton
+          icon={Mail}
+          label="Email Support"
+          variant="secondary"
+          disabled={!supportUrl}
+          onPress={() => openUrl(supportUrl)}
+        />
+        <IconButton
+          icon={ExternalLink}
+          label="Open Aryeo Booking"
+          variant="secondary"
+          onPress={() => openUrl(ARYEO_ORDER_FORM_URL)}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Privacy Notes</Text>
+        <InfoCard
+          icon={ShieldCheck}
+          title="Private keys stay off the app"
+          text="Aryeo and OpenAI credentials are handled by the private server, not stored in the app."
+        />
+        <InfoCard
+          icon={FileText}
+          title="AI output is draft copy"
+          text="Generated marketing copy should be reviewed for accuracy, compliance, and listing-specific details before publishing."
+        />
+        <InfoCard
+          icon={Info}
+          title="Early access preview"
+          text="Some listing and order data may be preview content while live account syncing is being connected."
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>App Details</Text>
+        <View style={styles.readinessList}>
+          <View style={styles.readinessRow}>
+            <CheckCircle2 size={19} color={colors.success} />
+            <Text style={styles.readinessText}>Booking, scheduling, and payment continue through Aryeo.</Text>
+          </View>
+          <View style={styles.readinessRow}>
+            <CheckCircle2 size={19} color={colors.success} />
+            <Text style={styles.readinessText}>Delivered media links can be viewed or copied from the Orders tab.</Text>
+          </View>
+          <View style={styles.readinessRow}>
+            <CheckCircle2 size={19} color={colors.success} />
+            <Text style={styles.readinessText}>AI copy is a review-ready draft, not a final compliance approval.</Text>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -538,8 +657,13 @@ export default function App() {
 
   async function copyLink(url) {
     if (!url) return;
-    await Clipboard.setStringAsync(url);
-    setToast("Media link copied");
+    await copyText(url, "Media link copied");
+  }
+
+  async function copyText(text, message = "Copied") {
+    if (!text) return;
+    await Clipboard.setStringAsync(text);
+    setToast(message);
     setTimeout(() => setToast(""), 1800);
   }
 
@@ -586,7 +710,8 @@ export default function App() {
         openUrl={openUrl}
       />
     ),
-    ai: <AiToolsScreen aiTool={aiTool} setAiTool={setAiTool} />,
+    ai: <AiToolsScreen aiTool={aiTool} setAiTool={setAiTool} copyText={copyText} />,
+    more: <MoreScreen openUrl={openUrl} />,
   }[activeTab];
 
   return (
@@ -872,35 +997,34 @@ const styles = StyleSheet.create({
     color: colors.muted,
     textDecorationLine: "line-through",
   },
-  videoGrid: {
+  guideGrid: {
     gap: 14,
   },
-  videoCard: {
+  guideCard: {
     backgroundColor: colors.panel,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.warmGray,
-    padding: 10,
-    gap: 8,
+    padding: 14,
+    gap: 12,
+    flexDirection: "row",
     ...shadows.card,
   },
-  videoImage: {
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  videoImageRadius: {
-    borderRadius: 6,
-  },
-  playBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  guideIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(44,44,44,0.82)",
+    backgroundColor: colors.yellowSoft,
+    borderWidth: 1,
+    borderColor: colors.charcoal,
   },
-  videoCategory: {
+  guideContent: {
+    flex: 1,
+    gap: 4,
+  },
+  guideCategory: {
     color: colors.gold,
     fontFamily: typography.heading,
     fontSize: 12,
@@ -908,12 +1032,18 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0,
   },
-  videoTitle: {
+  guideTitle: {
     color: colors.ink,
     fontFamily: typography.heading,
     fontSize: 16,
     lineHeight: 21,
     fontWeight: "800",
+  },
+  guideSummary: {
+    color: colors.muted,
+    fontFamily: typography.body,
+    fontSize: 14,
+    lineHeight: 20,
   },
   orderCard: {
     backgroundColor: colors.panel,
@@ -1050,6 +1180,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
+  columnField: {
+    flex: 1,
+    minWidth: 0,
+  },
   toolStack: {
     gap: 14,
   },
@@ -1064,6 +1198,12 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 7,
   },
+  resultHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
   resultTitle: {
     color: colors.gold,
     fontFamily: typography.heading,
@@ -1071,12 +1211,93 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     textTransform: "uppercase",
     letterSpacing: 0,
+    flex: 1,
+  },
+  resultCopyButton: {
+    minHeight: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.charcoal,
+    backgroundColor: colors.yellowSoft,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+  },
+  resultCopyText: {
+    color: colors.charcoal,
+    fontFamily: typography.heading,
+    fontSize: 12,
+    fontWeight: "900",
   },
   resultText: {
     color: colors.ink,
     fontFamily: typography.body,
     fontSize: 15,
     lineHeight: 22,
+  },
+  infoCard: {
+    backgroundColor: colors.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.warmGray,
+    padding: 14,
+    flexDirection: "row",
+    gap: 12,
+    ...shadows.card,
+  },
+  infoIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.yellowSoft,
+    borderWidth: 1,
+    borderColor: colors.charcoal,
+  },
+  infoContent: {
+    flex: 1,
+    gap: 4,
+  },
+  infoTitle: {
+    color: colors.ink,
+    fontFamily: typography.heading,
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "900",
+  },
+  infoText: {
+    color: colors.muted,
+    fontFamily: typography.body,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  readinessList: {
+    backgroundColor: colors.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.warmGray,
+    overflow: "hidden",
+  },
+  readinessRow: {
+    minHeight: 54,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  readinessText: {
+    flex: 1,
+    color: colors.ink,
+    fontFamily: typography.body,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "600",
   },
   tabBar: {
     position: "absolute",
@@ -1108,7 +1329,7 @@ const styles = StyleSheet.create({
   tabLabel: {
     color: colors.muted,
     fontFamily: typography.heading,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "800",
   },
   tabLabelSelected: {
